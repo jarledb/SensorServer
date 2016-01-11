@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--<beans xmlns="http://www.springframework.org/schema/beans"-->
+    <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+    <!--xmlns:tx="http://www.springframework.org/schema/tx"-->
+    <!--xsi:schemaLocation="http://www.springframework.org/schema/beans-->
+    <!--http://www.springframework.org/schema/beans/spring-beans.xsd-->
+    <!--http://www.springframework.org/schema/tx-->
+    <!--http://www.springframework.org/schema/tx/spring-tx.xsd">-->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/sensorservice" />
+        <property name="username" value="sensorservice" />
+        <property name="password" value="sensorservice" />
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <!--<property name="persistenceXmlLocation" value="classpath:/persistence.xml"/>-->
+        <property name="persistenceUnitName" value="sensor_service"/>
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <!--<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>-->
+        <!--<property name="jpaDialect" ref="jpaDialect"/>-->
+    </bean>
+
+    <bean id="alksjd" class="no.stonehill.persistence.AuthenticationRepository"/>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <!--<bean class="org.springframework.orm.jpa.JpaTransactionManager">-->
+        <!--<property name="entityManagerFactory"-->
+                  <!--ref="entityManagerFactory"/>-->
+    <!--</bean>-->
+
+
+    <tx:annotation-driven />
+
+</beans>

@@ -8,6 +8,7 @@
     </appender>
 
     <logger name="org.springframework" level="WARN" />
+    <!--<logger name="org.springframework" level="INFO" />-->
     <!--<logger name="org.springframework" level="DEBUG" />-->
 
     <root level="INFO">

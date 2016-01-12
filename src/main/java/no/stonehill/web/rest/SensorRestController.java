@@ -1,17 +1,19 @@
 package no.stonehill.web.rest;
 
-import no.stonehill.domain.Apiuser;
+import no.stonehill.domain.SensorEvent;
 import no.stonehill.persistence.AuthenticationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.transaction.Transactional;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 public class SensorRestController {
@@ -21,20 +23,21 @@ public class SensorRestController {
     AuthenticationRepository authenticationRepository;
 
     @Transactional
-    @RequestMapping(value = "sensor", method = RequestMethod.GET)
+    @RequestMapping(value = "sensor", method = RequestMethod.POST)
     public Serializable register(@RequestParam(value = "id") String id,
                                  @RequestParam String value,
                                  @RequestParam String type
     ) {
-        Apiuser toSave = new Apiuser();
-        toSave.setId(1L);
-        toSave.setName("test");
-        toSave.setPassword("password123");
-        LOG.error("Persisting");
-        authenticationRepository.persist(toSave);
-        LOG.info(":" + authenticationRepository.fetchUser(1L));
-//        Apiuser apiuser = authenticationRepository.fetchUser(1L);
-        //authenticationRepository.fetchUser(1L);
-        return authenticationRepository.fetchUser(1L);
+        SensorEvent event = new SensorEvent();
+        event.setSensorID(id);
+        event.setValue(value);
+        event.setSensorType(type);
+        event.setRegTime(LocalDateTime.now());
+        return authenticationRepository.persist(event);
+    }
+
+    @RequestMapping(value = "sensor", method = RequestMethod.GET)
+    public List<SensorEvent> getAllReadings() {
+        return authenticationRepository.fetchAllEvents();
     }
 }

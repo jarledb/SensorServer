@@ -5,6 +5,7 @@
     <persistence-unit name="sensor-service-test" transaction-type="RESOURCE_LOCAL">
         <description>Persistence using a built-in memory-only H2 (Hyperion) database</description>
         <class>no.stonehill.domain.Apiuser</class>
+        <class>no.stonehill.domain.SensorEvent</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <validation-mode>AUTO</validation-mode>
         <properties>

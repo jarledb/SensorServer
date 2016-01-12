@@ -11,10 +11,9 @@ public class Apiuser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private  long id;
+    private long id;
     private String name;
     private String password;
-
 
     public long getId() {
         return id;
@@ -38,5 +37,10 @@ public class Apiuser implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "Apiuser: " + id + name;
     }
 }

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<!-- Check out the source code on http://github.com/vjt/canvas-speedometer -->
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+    <link rel="stylesheet" type="text/css" href="css/speedometer.css" media="screen" />
+
+    <script type="text/javascript" src="js/xcanvas.js"></script>
+    <script type="text/javascript" src="js/tbe.js"></script>
+
+    <script type="text/javascript" src="js/digitaldisplay.js"></script>
+    <script type="text/javascript" src="js/speedometer.js"></script>
+    <script type="text/javascript" src="js/themes/temp.js"></script>
+    <script type="text/javascript" src="js/test.js"></script>
+    <!--<script type="text/javascript" src="js/themes/default.js"></script>-->
+
+    <!--<script type="text/javascript" src="js/example.js"></script>-->
+    <!--<script type="text/javascript" src="js/controls.js"></script>-->
+</head>
+<body>
+<div id="speedometer"></div>
+<div id="controls">
+    Animate update:  <input type="button" id="update" value="start" /><br/>
+    Animate rescale: <input type="text" id="maxvalue" value="200" />
+    <input type="button" id="rescale" value="rescale" /><br />
+    Operating mode:
+    <input type="radio" name="mode" id="incremental" checked="checked" /> incremental
+    <input type="radio" name="mode" id="random" /> random
+</div>
+</body>
+</html>

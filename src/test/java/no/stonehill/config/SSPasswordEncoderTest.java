@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class SSPasswordEncoderTest {
     private static String PASSWORD = "admin";
-    private static String ENCODED_PASSWORD = "$6$FHaS8Bna$v5b2P.p5ypWoxgCDVCivVlDCFYG1V0FgraI4aAlIEaXU.7PKal0eKMKp2U4e/Qf7QV/5EPN2GOJkbqll01su2/";
+    private static String ENCODED_PASSWORD = "$6$24g1VtTb$AtqUBDJikMb0n/EADU64RFHogMogTzdHScfFxmuEMobDrfkgT91oGpoolEJEE6aRj516hB1rtwAIfXi7xEqNR/";
     private static SSPasswordEncoder encoder = new SSPasswordEncoder();
 
     @Test

@@ -12,5 +12,6 @@
 
     <mvc:resources mapping="/js/**" location="/js/" cache-period="0"/>
     <mvc:resources mapping="/css/**" location="/css/" cache-period="0"/>
+    <mvc:resources mapping="/img/**" location="/img/" cache-period="31557600"/>
 
 </beans>

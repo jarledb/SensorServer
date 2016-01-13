@@ -1,0 +1,50 @@
+body.weather {
+    /*background-image: url('/img/weather_background.jpg');*/
+    background-image: url('/img/thunderstorm-rain.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    padding-top: 50px;
+    padding-bottom: 20px;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.box {
+    height: 300px;
+    /* width: 300px; */
+    /*background: #888;*/
+    background-color: rgba(128, 128, 128, 0.6);
+    /*opacity: 0.6;*/
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.box h2 {
+    text-align: center;
+}
+
+.box-mini {
+    margin: 10px;
+    height: 100px;
+    width: 100px;
+    background: #007588;
+    opacity: 0.8;
+    border-radius: 5px;
+}
+
+.degrees {
+    text-align: center;
+    /*color: white;*/
+    font: 4em bold;
+    font-family: 'Arial';
+}
+
+.warm {
+    color: #CC0000;
+}
+
+.cold {
+    color: #0000CC;
+}

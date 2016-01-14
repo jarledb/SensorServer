@@ -35,8 +35,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authenticationProvider(daoAuthenticationProvider)
                 .authorizeRequests()
-                .antMatchers("/src/main/webapp/css/**", "/src/main/webapp/js/**").permitAll()
-                .anyRequest().fullyAuthenticated()
+                .antMatchers(
+                        "/src/main/webapp/css/**",
+                        "/src/main/webapp/js/**",
+                        "/src/main/webapp/img/**"
+                ).permitAll()
+                .antMatchers("/register/**").fullyAuthenticated()
+//                .anyRequest().fullyAuthenticated()
                 .and()
                 .httpBasic()
                 .and()

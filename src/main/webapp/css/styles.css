@@ -13,12 +13,10 @@ body.weather {
 
 .box {
     height: 300px;
-    /* width: 300px; */
-    /*background: #888;*/
     background-color: rgba(128, 128, 128, 0.6);
-    /*opacity: 0.6;*/
     border-radius: 20px;
     padding: 10px;
+    margin-bottom: 10px;
 }
 
 .box h2 {
@@ -36,7 +34,6 @@ body.weather {
 
 .degrees {
     text-align: center;
-    /*color: white;*/
     font: 4em bold;
     font-family: 'Arial';
 }
@@ -47,4 +44,42 @@ body.weather {
 
 .cold {
     color: #0000CC;
+}
+
+.chart {
+    width: auto;
+    height: 110px;
+}
+
+@media screen and (max-width: 800px) {
+    body.weather {
+        padding-top: 20px;
+        padding-bottom: 0px;
+    }
+
+    .no_mobile {
+        visibility: hidden;
+        clear: both;
+        float: left;
+        margin: 10px auto 5px 20px;
+        width: 28%;
+        display: none;
+    }
+
+    .box {
+        height: auto;
+        border-radius: 10px;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .box h2 {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .degrees {
+        font: 3em bold;
+    }
+
 }

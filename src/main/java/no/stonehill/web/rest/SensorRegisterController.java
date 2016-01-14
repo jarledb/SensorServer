@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-public class SensorRestController {
-    private static Logger LOG = LoggerFactory.getLogger(SensorRestController.class);
+public class SensorRegisterController {
+    private static Logger LOG = LoggerFactory.getLogger(SensorRegisterController.class);
 
     @Autowired
     AuthenticationRepository authenticationRepository;
 
     @Transactional
-    @RequestMapping(value = "sensor", method = RequestMethod.POST)
+    @RequestMapping(value = "/register/sensor", method = RequestMethod.POST)
     public Serializable register(@RequestParam(value = "id") String id,
                                  @RequestParam String value,
                                  @RequestParam String type
@@ -36,7 +36,7 @@ public class SensorRestController {
         return authenticationRepository.persist(event);
     }
 
-    @RequestMapping(value = "sensor", method = RequestMethod.GET)
+    @RequestMapping(value = "/register/sensor", method = RequestMethod.GET)
     public List<SensorEvent> getAllReadings() {
         return authenticationRepository.fetchAllEvents();
     }

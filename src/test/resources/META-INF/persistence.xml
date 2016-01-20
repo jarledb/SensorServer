@@ -6,6 +6,9 @@
         <description>Persistence using a built-in memory-only H2 (Hyperion) database</description>
         <class>no.stonehill.domain.Apiuser</class>
         <class>no.stonehill.domain.SensorEvent</class>
+        <class>no.stonehill.domain.Sensor</class>
+        <!--<class>no.stonehill.domain.TempSensor</class>-->
+        <class>no.stonehill.domain.EventValue</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <validation-mode>AUTO</validation-mode>
         <properties>

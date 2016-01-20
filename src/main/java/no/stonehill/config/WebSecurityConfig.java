@@ -29,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private DaoAuthenticationProvider daoAuthenticationProvider;
 
     @Autowired
-    private AuthenticationRepository ar;
+    private AuthenticationRepository authenticationRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -52,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         return username -> {
             try {
-                Apiuser apiUser = ar.getApiUserbyName(username);
+                Apiuser apiUser = authenticationRepository.getApiUserbyName(username);
                 LOG.info("Got user: " + apiUser.getName());
                 return new User(apiUser.getName(), apiUser.getPassword(), true, true, true, true, AuthorityUtils.createAuthorityList("USER"));
             } catch (NoResultException | EmptyResultDataAccessException e) {

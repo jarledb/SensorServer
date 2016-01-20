@@ -6,6 +6,9 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>no.stonehill.domain.Apiuser</class>
         <class>no.stonehill.domain.SensorEvent</class>
+        <class>no.stonehill.domain.Sensor</class>
+        <!--<class>no.stonehill.domain.TempSensor</class>-->
+        <class>no.stonehill.domain.EventValue</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

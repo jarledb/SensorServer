@@ -1,7 +1,9 @@
 package no.stonehill.web.rest;
 
+import no.stonehill.domain.EventValue;
+import no.stonehill.domain.Sensor;
 import no.stonehill.domain.SensorEvent;
-import no.stonehill.persistence.AuthenticationRepository;
+import no.stonehill.persistence.SensorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +22,48 @@ public class SensorRegisterController {
     private static Logger LOG = LoggerFactory.getLogger(SensorRegisterController.class);
 
     @Autowired
-    AuthenticationRepository authenticationRepository;
+    SensorRepository sensorRepository;
 
     @Transactional
     @RequestMapping(value = "/register/sensor", method = RequestMethod.POST)
-    public Serializable register(@RequestParam(value = "id") String id,
-                                 @RequestParam String value,
-                                 @RequestParam String type
+    public Serializable registerSensor(@RequestParam(value = "id") String sensorId,
+                                       @RequestParam String name,
+                                       @RequestParam String type
     ) {
-        SensorEvent event = new SensorEvent();
-        event.setSensorID(id);
-        event.setValue(value);
-        event.setSensorType(type);
-        event.setRegTime(LocalDateTime.now());
-        return authenticationRepository.persist(event);
+        Sensor sensor = new Sensor();
+        sensor.setName(name);
+        sensor.setSensorId(sensorId);
+        sensor.setType(type);
+        return sensorRepository.persist(sensor);
     }
+
+    @Transactional
+    @RequestMapping(value = "/register/sensor/event", method = RequestMethod.POST)
+    //TODO: Rewrite typevalue to body data
+    public Serializable registerEvent(@RequestParam(value = "id") String id,
+                                      @RequestParam(value = "typevalue") List<List<String>> typevalue
+    ) {
+        Sensor sensor = sensorRepository.fetchSensor(Long.parseLong(id));
+        if (sensor == null) {
+            //TODO: throw exception
+            return "Could not find sensor";
+        }
+        SensorEvent event = new SensorEvent();
+        for (List<String> strings : typevalue) {
+            if (strings != null && strings.size()==2) {
+                event.addEventValue(new EventValue(strings.get(0), strings.get(1)));
+            }
+        }
+        event.setSensor(sensor);
+        event.setRegTime(LocalDateTime.now());
+        sensor.addValue(event);
+
+        return event;
+    }
+
 
     @RequestMapping(value = "/register/sensor", method = RequestMethod.GET)
     public List<SensorEvent> getAllReadings() {
-        return authenticationRepository.fetchAllEvents();
+        return sensorRepository.fetchAllEvents();
     }
 }

@@ -3,6 +3,7 @@ package no.stonehill;
 import no.stonehill.domain.Apiuser;
 import no.stonehill.domain.SensorEvent;
 import no.stonehill.persistence.AuthenticationRepository;
+import no.stonehill.persistence.SensorRepository;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +14,8 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class RepositoryQueryTest extends AbstractDbTest {
-    AuthenticationRepository repo;
+    SensorRepository repo;
+    AuthenticationRepository authenticationRepository;
 
     public static final String TEST_VALUE = "testValue";
     public static final String TESTKEY = "testkey";
@@ -21,10 +23,15 @@ public class RepositoryQueryTest extends AbstractDbTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
-        Field f = AuthenticationRepository.class.getDeclaredField("em");
-        repo = new AuthenticationRepository();
+        Field f = SensorRepository.class.getDeclaredField("em");
+        repo = new SensorRepository();
         f.setAccessible(true);
         f.set(repo, em);
+
+        Field arf = AuthenticationRepository.class.getDeclaredField("em");
+        authenticationRepository = new AuthenticationRepository();
+        arf.setAccessible(true);
+        arf.set(authenticationRepository, em);
     }
 
     @Test
@@ -33,8 +40,8 @@ public class RepositoryQueryTest extends AbstractDbTest {
         toSave.setId(1L);
         toSave.setName("test");
         toSave.setPassword("password");
-        repo.persist(toSave);
-        Apiuser apiuser = repo.fetchUser(1L);
+        authenticationRepository.persist(toSave);
+        Apiuser apiuser = authenticationRepository.fetchUser(1L);
         assertThat(apiuser).isNotNull();
     }
 
@@ -42,8 +49,8 @@ public class RepositoryQueryTest extends AbstractDbTest {
     @Test
     public void testSaveAndFetchEvent() {
         SensorEvent toSave = new SensorEvent();
-        toSave.setSensorID("test");
-        toSave.setValue("-19c");
+//        toSave.setSensorID("test");
+//        toSave.setValue("-19c");
         toSave.setRegTime(LocalDateTime.now());
         repo.persist(toSave);
         List<SensorEvent> sensorEvents = repo.fetchAllEvents();

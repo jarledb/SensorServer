@@ -1,15 +1,44 @@
 package no.stonehill.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import no.stonehill.web.rest.Views;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
-public abstract class Sensor<T> implements Serializable {
+@Entity
+public class Sensor implements Serializable {
+    public static Comparator<Sensor> SENSOR_NAME_COMPARATOR = (o1, o2) -> {
+        if (o1.getName() != null && o2.getName() != null) {
+            return o2.getName().compareTo(o1.getName());
+        }
+        return 0;
+    };
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonView(Views.Summary.class)
     private long id;
+    @JsonView(Views.Summary.class)
     private String sensorId;
+    @JsonView(Views.Summary.class)
     private String name;
-    private List<T> values;
+    @JsonView(Views.Summary.class)
+    private String type;
+
+    @JoinColumn(name = "sensorId")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<SensorEvent> events;
 
     public long getId() {
         return id;
@@ -35,17 +64,32 @@ public abstract class Sensor<T> implements Serializable {
         this.name = name;
     }
 
-    public List<T> getValues() {
-        return values;
+    public String getType() {
+        return type;
     }
 
-    public void setValues(List<T> values) {
-        this.values = values;
+    public void setType(String type) {
+        this.type = type;
     }
-    public void addValue(T value) {
-        if (values == null) {
-            values = new ArrayList<>();
+
+    public Set<SensorEvent> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<SensorEvent> values) {
+        this.events = values;
+    }
+
+    public void addValue(SensorEvent value) {
+        if (events == null) {
+            events = new TreeSet<>();
         }
-        values.add(value);
+        events.add(value);
+    }
+
+    public void sortEventsByDate() {
+        Set newSet = new TreeSet(SensorEvent.REG_TIME_COMPARATOR);
+        newSet.addAll(getEvents());
+        setEvents(newSet);
     }
 }

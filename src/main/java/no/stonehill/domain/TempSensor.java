@@ -1,7 +1,8 @@
 package no.stonehill.domain;
 
-import java.io.Serializable;
-
-public class TempSensor extends Sensor<Serializable[]> {
+//@Entity
+//@DiscriminatorValue("TempSensor")
+//@Inheritance(strategy = InheritanceType.JOINED)
+public class TempSensor{
 
 }

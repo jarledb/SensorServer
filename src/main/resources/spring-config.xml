@@ -19,6 +19,7 @@
     </bean>
 
     <bean id="authenticationRepository" class="no.stonehill.persistence.AuthenticationRepository"/>
+    <bean id="sensorRepository" class="no.stonehill.persistence.SensorRepository"/>
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 

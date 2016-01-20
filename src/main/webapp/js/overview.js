@@ -4,7 +4,7 @@ google.charts.setOnLoadCallback(function () {
 });
 setInterval(function () {
     updateTempSensors() // this will run after every 5 seconds
-}, 2500);
+}, 30000);
 function updateTempSensors() {
     $("#temprow").children().each(function (index, element) {
         var id = element.id;
@@ -14,7 +14,7 @@ function updateTempSensors() {
 }
 function getTempSensors() {
     $.ajax({
-        url: '/data/templog',
+        url: '/data/templog?type=TEMP_TEST',
         dataType: 'json',
     }).done(function (msg) {
         //console.log(msg);
@@ -31,19 +31,40 @@ function displayTempratureForSensor(id) {
         url: '/data/templog/' + id,
         dataType: 'json',
     }).done(function (msg) {
-        //console.log(msg);
+        console.log(msg);
         var location = drawTempratureBox(msg);
-        //console.log(location);
-        plotTempChart(msg.values, location);
+
+        if (msg.events && msg.events[0]) {
+            plotTempChart(msg.events, location);
+        }
     }).fail(function () {
         console.log("Could't get temp sensor data for sensor: " + id);
     });
 }
 
+function extractLatestTemprature(msg) {
+    var degree = "-";
+    if (msg.events && msg.events[0]) {
+        $.each(msg.events, function (index, event) {
+            if (event && event.values && event.values[0]) {
+                $.each(event.values, function (index, value) {
+                    if (value.key == "TEMP") {
+                        degree = Math.round(value.value * 10) / 10;
+                        return false; //break each loop
+                    }
+                });
+            }
+            if (degree != "-") { //temp found, break each loop
+                return false;
+            }
+        });
+    }
+    return degree;
+}
 function drawTempratureBox(msg) {
     var temprow = document.getElementById("temprow");
     var id = "tempBox_" + msg.id;
-    var degree = Math.round(msg.values[0][1] * 10) / 10
+    var degree = extractLatestTemprature(msg);
 
     if (document.getElementById(id)) {
         $("#" + id).find(".degrees").html(degree + "°C")
@@ -73,14 +94,30 @@ function drawTempratureBox(msg) {
     ;
     return id;
 }
-function plotTempChart(msg, documentLocation) {
+function plotTempChart(events, documentLocation) {
     var data = new google.visualization.DataTable();
-    data.addColumn('number', '');
+    data.addColumn('datetime', '');
     data.addColumn('number', '');
     data.addColumn('boolean', 'axis-crossing point');
 
-    msg.forEach(function (entry) {
-        data.addRow([entry[0], entry[1], false]);
+    $.each(events, function (index, event) {
+        if (event && event.values && event.values[0]) {
+            $.each(event.values, function (index, value) {
+                if (value.key == "TEMP") {
+                    var date = new Date(event.regTime);
+
+                    var d = new Date();
+                    d.setDate(d.getDate() - 1);
+
+                    if (date>d) {
+                        console.log(date.getHours() + " : " + new Number(value.value).valueOf());
+                        data.addRow([date, new Number(value.value).valueOf(), false]);
+                    }
+                    return false; //break each loop
+                }
+            });
+        }
+
     });
 
     var p1, p2, m, b, intersect;
@@ -93,8 +130,8 @@ function plotTempChart(msg, documentLocation) {
             b = p1.y - m * p1.x;
             intersect = -1 * b / m;
             data.insertRows(i, [
-                [intersect, p1.y, true],
-                [intersect, p2.y, true]
+                [new Date(intersect), p1.y, true],
+                [new Date(intersect), p2.y, true]
             ]);
         }
     }
@@ -120,20 +157,38 @@ function plotTempChart(msg, documentLocation) {
         curveType: 'function',
         legend: 'none',
         backgroundColor: 'none',
+        //width: 900,
         hAxis: {
+            //format: 'HH:mm',
             gridlines: {
-                color: 'none',
+                color: gridColor, //'none',
+
+                count: -1,
+                units: {
+                    days: {format: ['MMM dd']},
+                    hours: {format: ['HH:mm', 'ha']},
+                },
+
             },
+            minorGridlines: {
+                color: "#777", //'none',
+                units: {
+                    hours: {format: ['hh:mm:ss a', 'ha']},
+                    minutes: {format: ['HH:mm a Z', ':mm']}
+                }
+            },
+
             baselineColor: 'none',
-            direction: -1,
+            //direction: -1,
             textStyle: {
                 color: gridColor
             },
             //title: 'Timer',
         },
         vAxis: {
+            format: '#',
             gridlines: {
-                color: gridColor
+                color: gridColor,
             },
             baselineColor: gridColor,
             textStyle: {
@@ -144,6 +199,9 @@ function plotTempChart(msg, documentLocation) {
             0: {color: '#CC0000', visibleInLegend: false},
             1: {color: '#0000CC', visibleInLegend: false}
         },
+        //timeline: {
+        //    groupByRowLabel: true
+        //}
     };
 
     var chart = new google.visualization.LineChart($("#" + documentLocation).find(".chart")[0]);

@@ -1,7 +1,6 @@
 package no.stonehill.persistence;
 
 import no.stonehill.domain.Apiuser;
-import no.stonehill.domain.SensorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -11,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
-import java.util.List;
 
 @Repository
 public class AuthenticationRepository {
@@ -45,12 +43,4 @@ public class AuthenticationRepository {
                 .getSingleResult();
     }
 
-    public SensorEvent persist(SensorEvent event) {
-        LOG.info("Persisting event: " + event.toString());
-        return em.merge(event);
-    }
-
-    public List<SensorEvent> fetchAllEvents() {
-        return em.createQuery("From SensorEvent", SensorEvent.class).getResultList();
-    }
 }

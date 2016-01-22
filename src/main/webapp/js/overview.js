@@ -1,14 +1,77 @@
+var data;
+var chart = null;
+var t = 5, h = 0;
+var gridColor = '#444';
+var options = {
+    curveType: 'function',
+    legend: {position: 'top'},
+    backgroundColor: 'none',
+    //width: 900,
+    hAxis: {
+        gridlines: {
+            color: gridColor, //'none',
+
+            count: -1,
+
+            units: {
+                years: {format: ['HH:mm']},
+                months: {format: ['HH:mm']},
+                days: {format: ['EE HH:mm']},
+                hours: {format: ['HH:mm']},
+                minutes: {format: ['HH:mm']},
+                seconds: {format: ['HH:mm']},
+            }
+
+        },
+        minorGridlines: {
+            color: "#777", //'none',
+            units: {
+                hours: {format: ['HH:mm']},
+                minutes: {format: ['HH:mm']}
+            }
+        },
+
+        baselineColor: 'none',
+        //direction: -1,
+        textStyle: {
+            color: gridColor
+        },
+    },
+    vAxis: {
+        format: '#',
+        gridlines: {
+            color: gridColor,
+        },
+        baselineColor: gridColor,
+        textStyle: {
+            color: gridColor
+        }
+    },
+    series: {
+        0: {targetAxisIndex: 0, color: '#CCCC00', visibleInLegend: true},
+        1: {targetAxisIndex: 1, color: '#00CCCC', visibleInLegend: true}
+    },
+    vAxes: {
+        0: {title: 'Temps', titleTextStyle: {color: gridColor}},
+        1: {title: 'Fuktighet', titleTextStyle: {color: gridColor}},
+    },
+    interpolateNulls: true,
+    animation: {
+        duration: 500,
+        easing: 'out',
+    }
+};
+
 google.charts.load('current', {'packages': ['corechart']});
 google.charts.setOnLoadCallback(function () {
     getTempSensors();
 });
 setInterval(function () {
     updateTempSensors() // this will run after every 5 seconds
-}, 30000);
+}, 5000);
 function updateTempSensors() {
     $("#temprow").children().each(function (index, element) {
         var id = element.id;
-
         displayTempratureForSensor(id.split("_")[1]);
     });
 }
@@ -95,115 +158,35 @@ function drawTempratureBox(msg) {
     return id;
 }
 function plotTempChart(events, documentLocation) {
-    var data = new google.visualization.DataTable();
+    data = new google.visualization.DataTable();
     data.addColumn('datetime', '');
-    data.addColumn('number', '');
-    data.addColumn('boolean', 'axis-crossing point');
-
+    data.addColumn('number', 'Tempratur');
+    data.addColumn('number', 'Fuktighet');
     $.each(events, function (index, event) {
-        if (event && event.values && event.values[0]) {
-            $.each(event.values, function (index, value) {
-                if (value.key == "TEMP") {
-                    var date = new Date(event.regTime);
+        if (event && event.regTime && event.values && event.values[0]) {
+            var date = new Date(event.regTime);
 
-                    var d = new Date();
-                    d.setDate(d.getDate() - 1);
+            var d = new Date();
+            d.setDate(d.getDate() - 1);
 
-                    if (date>d) {
-                        console.log(date.getHours() + " : " + new Number(value.value).valueOf());
-                        data.addRow([date, new Number(value.value).valueOf(), false]);
+            if (date > d) { //only display last 24 hours
+                var temp = null, humid = null;
+                $.each(event.values, function (index, value) {
+                    if (value.key == "TEMP") {
+                        temp = new Number(value.value).valueOf() + t;
+                    } else if (value.key == "HUMIDITY") {
+                        humid = new Number(value.value).valueOf() + h;
                     }
-                    return false; //break each loop
-                }
-            });
+                });
+                data.addRow([date, temp, humid]);
+            }
         }
-
     });
 
-    var p1, p2, m, b, intersect;
-    for (var i = data.getNumberOfRows() - 1; i > 0; i--) {
-        p1 = {x: data.getValue(i - 1, 0), y: data.getValue(i - 1, 1)};
-        p2 = {x: data.getValue(i, 0), y: data.getValue(i, 1)};
-
-        if ((p1.y >= 0 && p2.y < 0) || (p1.y < 0 && p2.y >= 0)) {
-            m = (p2.y - p1.y) / (p2.x - p1.x);
-            b = p1.y - m * p1.x;
-            intersect = -1 * b / m;
-            data.insertRows(i, [
-                [new Date(intersect), p1.y, true],
-                [new Date(intersect), p2.y, true]
-            ]);
-        }
+    if (chart == null) {
+        chart = new google.visualization.LineChart($("#" + documentLocation).find(".chart")[0]);
     }
-
-    var view = new google.visualization.DataView(data);
-    view.setColumns([0, {
-        type: 'number',
-        label: 'Positive',
-        calc: function (dt, row) {
-            var y = dt.getValue(row, 1);
-            return data.getValue(row, 2) ? 0 : ((y >= 0) ? y : null);
-        }
-    }, {
-        type: 'number',
-        label: 'Negative',
-        calc: function (dt, row) {
-            var y = dt.getValue(row, 1);
-            return data.getValue(row, 2) ? 0 : ((y < 0) ? y : null);
-        }
-    }]);
-    var gridColor = '#444';
-    var options = {
-        curveType: 'function',
-        legend: 'none',
-        backgroundColor: 'none',
-        //width: 900,
-        hAxis: {
-            //format: 'HH:mm',
-            gridlines: {
-                color: gridColor, //'none',
-
-                count: -1,
-                units: {
-                    days: {format: ['MMM dd']},
-                    hours: {format: ['HH:mm', 'ha']},
-                },
-
-            },
-            minorGridlines: {
-                color: "#777", //'none',
-                units: {
-                    hours: {format: ['hh:mm:ss a', 'ha']},
-                    minutes: {format: ['HH:mm a Z', ':mm']}
-                }
-            },
-
-            baselineColor: 'none',
-            //direction: -1,
-            textStyle: {
-                color: gridColor
-            },
-            //title: 'Timer',
-        },
-        vAxis: {
-            format: '#',
-            gridlines: {
-                color: gridColor,
-            },
-            baselineColor: gridColor,
-            textStyle: {
-                color: gridColor
-            }
-        },
-        series: {
-            0: {color: '#CC0000', visibleInLegend: false},
-            1: {color: '#0000CC', visibleInLegend: false}
-        },
-        //timeline: {
-        //    groupByRowLabel: true
-        //}
-    };
-
-    var chart = new google.visualization.LineChart($("#" + documentLocation).find(".chart")[0]);
-    chart.draw(view, options);
+    chart.draw(data, options);
+    //chart.draw(data, classicOptions);
+//chart.draw(view, {});
 }

@@ -22,7 +22,6 @@ public class SensorRepository {
 
     @PersistenceUnit(unitName = "entityManagerFactory")
     public void setEntityManagerFactory(EntityManagerFactory emf) {
-        LOG.info("**************EMF init************");
         this.entityManagerFactory = emf;
     }
 

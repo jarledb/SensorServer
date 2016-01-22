@@ -21,7 +21,6 @@ public class AuthenticationRepository {
 
     @PersistenceUnit(unitName = "entityManagerFactory")
     public void setEntityManagerFactory(EntityManagerFactory emf) {
-        LOG.info("**************EMF init************");
         this.entityManagerFactory = emf;
     }
 

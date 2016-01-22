@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -73,6 +75,10 @@ public class SensorEvent implements Serializable {
 
     public void setRegTime(LocalDateTime regTime) {
         this.regTime = regTime;
+    }
+
+    public ZonedDateTime getRegTimeWithTimeZone() {
+        return regTime.atZone(ZoneId.systemDefault());
     }
 
     public Sensor getSensor() {

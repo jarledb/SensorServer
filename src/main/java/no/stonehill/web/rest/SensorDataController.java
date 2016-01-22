@@ -1,6 +1,7 @@
 package no.stonehill.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.google.common.collect.FluentIterable;
 import no.stonehill.domain.Sensor;
 import no.stonehill.persistence.SensorRepository;
 import org.slf4j.Logger;
@@ -26,8 +27,8 @@ public class SensorDataController {
     @RequestMapping(value = "data/templog/{id}", method = RequestMethod.GET)
     public Serializable getSensorLogData(@PathVariable(value = "id") String id) {
         Sensor sensor = sensorRepository.fetchSensor(Long.parseLong(id));
-
         sensor.sortEventsByDate();
+        sensor.setEvents(FluentIterable.from(sensor.getEvents()).limit(1000).toSet());
         return sensor;
     }
 

@@ -1,4 +1,4 @@
-var chartList=new Array();
+var chartList = new Array();
 var data;
 var chart = null;
 var gridColor = '#333';
@@ -7,7 +7,7 @@ var options = {
     legend: {position: 'top'},
     backgroundColor: 'none',
     //width: 300,
-    pointSize: 3,
+    //pointSize: 3,
     hAxis: {
         gridlines: {
             //color: '#000',
@@ -59,8 +59,8 @@ var options = {
         1: {targetAxisIndex: 1, color: '#00CCCC', visibleInLegend: true}
     },
     vAxes: {
-        0: {title: 'Temps', format: '#',titleTextStyle: {color: gridColor}},
-        1: {title: 'Fuktighet', format: '#%',  maxValue: 1, minValue: 0,titleTextStyle: {color: gridColor}},
+        0: {title: 'Temps', format: '#.#', titleTextStyle: {color: gridColor}},
+        1: {title: 'Fuktighet', format: '#%', maxValue: 1, minValue: 0, titleTextStyle: {color: gridColor}},
     },
     interpolateNulls: true,
     animation: {
@@ -102,10 +102,9 @@ function displayTempratureForSensor(id) {
         url: '/data/templog/' + id,
         dataType: 'json',
     }).done(function (msg) {
-        console.log(msg);
-        var location = drawTempratureBox(msg);
-
+        //console.log(msg);
         if (msg.events && msg.events[0]) {
+            var location = drawTempratureBox(msg);
             plotTempChart(msg.events, location);
         }
     }).fail(function () {
@@ -114,7 +113,7 @@ function displayTempratureForSensor(id) {
 }
 
 function extractLatestTempratureData(msg) {
-    var data = {degree:"-", regtime:""};
+    var data = {degree: "-", regtimepretty: ""};
 
     if (msg.events && msg.events[0]) {
         $.each(msg.events, function (index, event) {
@@ -122,7 +121,8 @@ function extractLatestTempratureData(msg) {
                 $.each(event.values, function (index, value) {
                     if (value.key == "TEMP") {
                         data.degree = Math.round(value.value * 10) / 10;
-                        data.regtime = new Date(event.regTimeWithTimeZone);
+                        data.regtimepretty = event.regTimePretty;
+                        //data.regtime = new Date(event.regTimeWithTimeZone);
                         return false; //break each loop
                     }
                 });
@@ -144,10 +144,11 @@ function drawTempratureBox(msg) {
         tempDiv.removeClass("warm");
         tempDiv.removeClass("cold");
         tempDiv.addClass(tempData.degree >= 0 ? "warm" : "cold");
-        $("#" + id).find(".datetime").html(tempData.regtime.toLocaleString('nb'));
+        $("#" + id).find(".datetime").html(tempData.regtimepretty);
     } else {
+        console.log(tempData);
         var col = document.createElement("div");
-        col.className = col.className + "col-xs-6 col-md-3";
+        col.className = col.className + "col-xs-6 col-md-4";
         col.id = id;
 
         temprow.appendChild(col);
@@ -166,7 +167,7 @@ function drawTempratureBox(msg) {
 
         var datetime = document.createElement("h6");
         datetime.className = datetime.className + "datetime";
-        datetime.appendChild(document.createTextNode(tempData.regtime.toLocaleString('nb')));
+        datetime.appendChild(document.createTextNode(tempData.regtimepretty));
         box.appendChild(datetime);
 
         var chart = document.createElement("div");
@@ -187,7 +188,7 @@ function plotTempChart(events, documentLocation) {
 
             var d = new Date();
             d.setDate(d.getDate() - 1);
-            //d.setHours(d.getHours() - 2);
+            //d.setMinutes(d.getMinutes() - 5);
 
             if (date > d) { //only display last 24 hours
                 var temp = null, humid = null;
@@ -195,7 +196,7 @@ function plotTempChart(events, documentLocation) {
                     if (value.key == "TEMP" && value.value) {
                         temp = new Number(value.value).valueOf();
                     } else if (value.key == "HUMIDITY" && value.value) {
-                        humid = new Number(value.value).valueOf()/100;
+                        humid = new Number(value.value).valueOf() / 100;
                     }
                 });
                 data.addRow([date, temp, humid]);

@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -81,6 +82,10 @@ public class SensorEvent implements Serializable {
         return regTime.atZone(ZoneId.systemDefault());
     }
 
+    public String getRegTimePretty() {
+        return regTime.format(DateTimeFormatter.ofPattern("dd.MM HH:mm"));
+    }
+
     public Sensor getSensor() {
         return sensor;
     }
@@ -94,5 +99,25 @@ public class SensorEvent implements Serializable {
             values = new TreeSet<>();
         }
         values.add(value);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (values == null) {
+            sb.append(id);
+            sb.append(" ");
+        } else {
+            sb.append(regTime.format(DateTimeFormatter.ofPattern("DD. MMM HH:mm:ss")));
+            sb.append(" ");
+            for (EventValue value : values) {
+                sb.append(value.getKey());
+                sb.append(": ");
+                sb.append(value.getValue());
+                sb.append(", ");
+            }
+        }
+
+        return sb.toString();
     }
 }

@@ -53,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return username -> {
             try {
                 Apiuser apiUser = authenticationRepository.getApiUserbyName(username);
-                LOG.info("Got user: " + apiUser.getName());
+                //LOG.info("Got user: " + apiUser.getName());
                 return new User(apiUser.getName(), apiUser.getPassword(), true, true, true, true, AuthorityUtils.createAuthorityList("USER"));
             } catch (NoResultException | EmptyResultDataAccessException e) {
                 throw new UsernameNotFoundException("Could not find the user '" + username + "'");

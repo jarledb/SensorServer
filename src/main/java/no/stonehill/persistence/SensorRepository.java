@@ -50,4 +50,8 @@ public class SensorRepository {
     public Sensor fetchSensor(long id) {
         return em.find(Sensor.class, id);
     }
+
+    public Sensor fetchSensorBySensorId(String sensorId) {
+        return em.createQuery("From Sensor WHERE sensorId=:sensorId", Sensor.class).setParameter("sensorId", sensorId).getSingleResult();
+    }
 }

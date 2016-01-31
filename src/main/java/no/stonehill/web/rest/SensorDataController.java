@@ -28,7 +28,7 @@ public class SensorDataController {
     public Serializable getSensorLogData(@PathVariable(value = "id") String id) {
         Sensor sensor = sensorRepository.fetchSensor(Long.parseLong(id));
         sensor.sortEventsByDate();
-        sensor.setEvents(FluentIterable.from(sensor.getEvents()).limit(1000).toSet());
+        sensor.setEvents(FluentIterable.from(sensor.getEvents()).limit(2000).toSet());
         return sensor;
     }
 

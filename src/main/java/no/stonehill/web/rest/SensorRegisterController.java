@@ -43,20 +43,28 @@ public class SensorRegisterController {
     public Serializable registerEvent(@RequestParam(value = "id") String id,
                                       @RequestParam(value = "typevalue") List<List<String>> typevalue
     ) {
-        Sensor sensor = sensorRepository.fetchSensor(Long.parseLong(id));
+        Sensor sensor;
+        try { //If id is a Long then its a DB id, if not it is the sensorID
+            sensor = sensorRepository.fetchSensor(Long.parseLong(id));
+        } catch (NumberFormatException e) {
+            sensor = sensorRepository.fetchSensorBySensorId(id);
+        }
+
         if (sensor == null) {
             //TODO: throw exception
+            LOG.warn("Could not find sensor with ID: " + id);
             return "Could not find sensor";
         }
         SensorEvent event = new SensorEvent();
         for (List<String> strings : typevalue) {
-            if (strings != null && strings.size()==2) {
+            if (strings != null && strings.size() == 2) {
                 event.addEventValue(new EventValue(strings.get(0), strings.get(1)));
             }
         }
         event.setSensor(sensor);
         event.setRegTime(LocalDateTime.now());
         sensor.addValue(event);
+        LOG.info("Registering: " + sensor.getName() + " " + event.toString());
 
         return event;
     }

@@ -113,7 +113,7 @@ function displayTempratureForSensor(id) {
 }
 
 function extractLatestTempratureData(msg) {
-    var data = {degree: "-", regtimepretty: ""};
+    var data = {degree: "-", updated_pretty: ""};
 
     if (msg.events && msg.events[0]) {
         $.each(msg.events, function (index, event) {
@@ -121,7 +121,7 @@ function extractLatestTempratureData(msg) {
                 $.each(event.values, function (index, value) {
                     if (value.key == "TEMP") {
                         data.degree = Math.round(value.value * 10) / 10;
-                        data.regtimepretty = event.regTimePretty;
+                        data.updated_pretty = event.updatedPretty;
                         //data.regtime = new Date(event.regTimeWithTimeZone);
                         return false; //break each loop
                     }
@@ -144,7 +144,7 @@ function drawTempratureBox(msg) {
         tempDiv.removeClass("warm");
         tempDiv.removeClass("cold");
         tempDiv.addClass(tempData.degree >= 0 ? "warm" : "cold");
-        $("#" + id).find(".datetime").html(tempData.regtimepretty);
+        $("#" + id).find(".datetime").html(tempData.updated_pretty);
     } else {
         console.log(tempData);
         var col = document.createElement("div");
@@ -167,7 +167,7 @@ function drawTempratureBox(msg) {
 
         var datetime = document.createElement("h6");
         datetime.className = datetime.className + "datetime";
-        datetime.appendChild(document.createTextNode(tempData.regtimepretty));
+        datetime.appendChild(document.createTextNode(tempData.updated_pretty));
         box.appendChild(datetime);
 
         var chart = document.createElement("div");
@@ -183,8 +183,8 @@ function plotTempChart(events, documentLocation) {
     data.addColumn('number', 'Tempratur');
     data.addColumn('number', 'Fuktighet');
     $.each(events, function (index, event) {
-        if (event && event.regTime && event.values && event.values[0]) {
-            var date = new Date(event.regTimeWithTimeZone);
+        if (event && event.updatedWithTimeZone && event.values && event.values[0]) {
+            var date = new Date(event.updatedWithTimeZone);
 
             var d = new Date();
             d.setDate(d.getDate() - 1);

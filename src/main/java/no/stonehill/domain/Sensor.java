@@ -88,7 +88,7 @@ public class Sensor implements Serializable {
     }
 
     public void sortEventsByDate() {
-        Set newSet = new TreeSet(SensorEvent.REG_TIME_COMPARATOR);
+        Set newSet = new TreeSet(SensorEvent.UPDATED_TIME_COMPARATOR);
         newSet.addAll(getEvents());
         setEvents(newSet);
     }

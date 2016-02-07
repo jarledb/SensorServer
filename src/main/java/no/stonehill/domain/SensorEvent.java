@@ -25,11 +25,11 @@ import java.util.TreeSet;
 
 @Entity
 public class SensorEvent implements Serializable {
-    public static Comparator<SensorEvent> REG_TIME_COMPARATOR = (o1, o2) -> {
-        if (o1.getRegTime() != null && o2.getRegTime() != null) {
-            if (o1.getRegTime().isBefore(o2.getRegTime())) {
+    public static Comparator<SensorEvent> UPDATED_TIME_COMPARATOR = (o1, o2) -> {
+        if (o1.getUpdated() != null && o2.getUpdated() != null) {
+            if (o1.getUpdated().isBefore(o2.getUpdated())) {
                 return 1;
-            } else if (o1.getRegTime().isAfter(o2.getRegTime())) {
+            } else if (o1.getUpdated().isAfter(o2.getUpdated())) {
                 return -1;
             }
         }
@@ -53,6 +53,11 @@ public class SensorEvent implements Serializable {
 
     @Convert(converter = no.stonehill.config.LocalDateAttributeConverter.class)
     private LocalDateTime regTime;
+
+    @Convert(converter = no.stonehill.config.LocalDateAttributeConverter.class)
+    private LocalDateTime updated;
+
+    private Integer identicalEvents;
 
     public long getId() {
         return id;
@@ -101,6 +106,29 @@ public class SensorEvent implements Serializable {
         values.add(value);
     }
 
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
+    }
+    public ZonedDateTime getUpdatedWithTimeZone() {
+        return updated.atZone(ZoneId.systemDefault());
+    }
+
+    public String getUpdatedPretty() {
+        return updated.format(DateTimeFormatter.ofPattern("dd.MM HH:mm"));
+    }
+
+    public Integer getIdenticalEvents() {
+        return identicalEvents;
+    }
+
+    public void setIdenticalEvents(Integer identicalEvents) {
+        this.identicalEvents = identicalEvents;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -119,5 +147,9 @@ public class SensorEvent implements Serializable {
         }
 
         return sb.toString();
+    }
+
+    public void incrementIdenticalEvents() {
+        identicalEvents = identicalEvents == null ? 1 : identicalEvents + 1;
     }
 }

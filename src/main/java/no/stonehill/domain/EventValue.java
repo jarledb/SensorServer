@@ -12,10 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Entity
 @Access(AccessType.FIELD)
-public class EventValue implements Comparable<EventValue>{
+public class EventValue implements Serializable, Comparable<EventValue>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -83,17 +84,19 @@ public class EventValue implements Comparable<EventValue>{
 
         EventValue that = (EventValue) o;
 
-        if (id != that.id) return false;
         if (key != null ? !key.equals(that.key) : that.key != null) return false;
-        return value != null ? value.equals(that.value) : that.value == null;
+        return !(value != null ? !value.equals(that.value) : that.value != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (key != null ? key.hashCode() : 0);
+        int result = key != null ? key.hashCode() : 0;
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
+    }
+
+    public boolean isValid() {
+        return key != null && !key.isEmpty() && value != null && !value.isEmpty();
     }
 }

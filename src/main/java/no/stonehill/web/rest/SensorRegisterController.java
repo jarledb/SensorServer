@@ -8,13 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -41,7 +39,7 @@ public class SensorRegisterController {
     @RequestMapping(value = "/register/sensor/event", method = RequestMethod.POST)
     //TODO: Rewrite typevalue to body data
     public Serializable registerEvent(@RequestParam(value = "id") String id,
-                                      @RequestParam(value = "typevalue") List<List<String>> typevalue
+                                      @RequestBody List<EventValue> typevalue
     ) {
         Sensor sensor;
         try { //If id is a Long then its a DB id, if not it is the sensorID
@@ -56,17 +54,48 @@ public class SensorRegisterController {
             return "Could not find sensor";
         }
         SensorEvent event = new SensorEvent();
-        for (List<String> strings : typevalue) {
-            if (strings != null && strings.size() == 2) {
-                event.addEventValue(new EventValue(strings.get(0), strings.get(1)));
+        event.setRegTime(LocalDateTime.now());
+        event.setUpdated(LocalDateTime.now());
+        event.setIdenticalEvents(0);
+        for (EventValue eventValue : typevalue) {
+            if (eventValue != null && eventValue.isValid()) {
+                event.addEventValue(eventValue);
             }
         }
-        event.setSensor(sensor);
-        event.setRegTime(LocalDateTime.now());
-        sensor.addValue(event);
-        LOG.info("Registering: " + sensor.getName() + " " + event.toString());
 
+//        List<SensorEvent> lastTwoEvents = sensorRepository.getLastEventForSensor(sensor);
+//
+//
+//        boolean identical = isIdentical(event, lastTwoEvents.get(1));
+//        identical = identical && isIdentical(event, lastTwoEvents.get(0));
+//        if (identical) {
+//            event = lastTwoEvents.get(0);
+//            event.incrementIdenticalEvents();
+//            event.setUpdated(LocalDateTime.now());
+//            LOG.info("Updating: " + sensor.getName() + " " + event.toString());
+//        }
+        LOG.info("Updating: " + sensor.getName() + " " + event.toString());
+
+        event.setSensor(sensor);
+        sensor.addValue(event);
         return event;
+    }
+
+    private boolean isIdentical(SensorEvent newEvent, SensorEvent lastEvent) {
+        LocalDateTime someTimeAgo = LocalDateTime.now().minusMinutes(60);
+
+        if (lastEvent != null && lastEvent.getRegTime() != null && lastEvent.getRegTime().isAfter(someTimeAgo)) {
+            boolean identical = true;
+            for (EventValue eventValue : newEvent.getValues()) {
+                if (!lastEvent.getValues().contains(eventValue)) {
+                    identical = false;
+                }
+            }
+            return identical;
+        } else {
+            return false;
+        }
+
     }
 
 

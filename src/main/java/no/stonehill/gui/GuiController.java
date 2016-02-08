@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class GuiController {
 
     @RequestMapping("/")
-    public String overview(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
+    public String overview(@RequestParam(value = "name", required = false, defaultValue = "World") String name, Model model) {
         model.addAttribute("name", name);
         return "overview";
     }

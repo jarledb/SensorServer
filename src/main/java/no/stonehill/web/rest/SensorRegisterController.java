@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -63,39 +62,32 @@ public class SensorRegisterController {
             }
         }
 
-//        List<SensorEvent> lastTwoEvents = sensorRepository.getLastEventForSensor(sensor);
-//
-//
-//        boolean identical = isIdentical(event, lastTwoEvents.get(1));
-//        identical = identical && isIdentical(event, lastTwoEvents.get(0));
-//        if (identical) {
-//            event = lastTwoEvents.get(0);
-//            event.incrementIdenticalEvents();
-//            event.setUpdated(LocalDateTime.now());
-//            LOG.info("Updating: " + sensor.getName() + " " + event.toString());
-//        }
-        LOG.info("Updating: " + sensor.getName() + " " + event.toString());
+        List<SensorEvent> lastTwoEvents = sensorRepository.getLastTwoEventsForSensor(sensor);
 
+        if (lastTwoEvents.size() == 2 && isIdentical(event, lastTwoEvents)) {
+            event = lastTwoEvents.get(0);
+            event.incrementIdenticalEvents();
+            event.setUpdated(LocalDateTime.now());
+            LOG.info("Updating: " + sensor.getName() + " " + event.toString());
+        } else {
+            LOG.info("Registering: " + sensor.getName() + " " + event.toString());
+        }
         event.setSensor(sensor);
         sensor.addValue(event);
         return event;
     }
 
-    private boolean isIdentical(SensorEvent newEvent, SensorEvent lastEvent) {
+    protected static boolean isIdentical(SensorEvent newEvent, List<SensorEvent> oldEvents) {
         LocalDateTime someTimeAgo = LocalDateTime.now().minusMinutes(60);
-
-        if (lastEvent != null && lastEvent.getRegTime() != null && lastEvent.getRegTime().isAfter(someTimeAgo)) {
-            boolean identical = true;
-            for (EventValue eventValue : newEvent.getValues()) {
-                if (!lastEvent.getValues().contains(eventValue)) {
-                    identical = false;
-                }
+        final boolean[] identical = {true};
+        for (SensorEvent oldEvent : oldEvents) {
+            if (oldEvent.getRegTime().isAfter(someTimeAgo)) {
+                newEvent.getValues().forEach(
+                        eventValue -> oldEvent.getValues().forEach(
+                                old -> identical[0] = eventValue.equals(old)));
             }
-            return identical;
-        } else {
-            return false;
         }
-
+        return identical[0];
     }
 
 

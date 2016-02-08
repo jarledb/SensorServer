@@ -4,19 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Access(AccessType.FIELD)
-public class EventValue implements Serializable, Comparable<EventValue>{
+public class EventValue implements Serializable, Comparable<EventValue> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,7 +23,7 @@ public class EventValue implements Serializable, Comparable<EventValue>{
     private SensorEvent sensorEvent;
 
     private String key;
-    private  String value;
+    private String value;
 
     public EventValue() {
     }

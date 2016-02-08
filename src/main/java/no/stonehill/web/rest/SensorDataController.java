@@ -1,24 +1,15 @@
 package no.stonehill.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import no.stonehill.domain.Sensor;
-import no.stonehill.domain.SensorEvent;
 import no.stonehill.persistence.SensorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +29,13 @@ public class SensorDataController {
         } catch (NumberFormatException e) {
             sensor = sensorRepository.fetchSensorBySensorId(id);
         }
-        sensor.setEvents(sensor.getEvents()
-                .stream().filter(
-                        event -> event.getUpdated().isAfter(LocalDateTime.now().minusDays(daysInPast))
-                ).collect(Collectors.toSet()));
-        sensor.sortEventsByDate();
+        if (sensor.getEvents() != null) {
+            sensor.setEvents(sensor.getEvents()
+                    .stream().filter(
+                            event -> event.getUpdated().isAfter(LocalDateTime.now().minusDays(daysInPast))
+                    ).collect(Collectors.toSet()));
+            sensor.sortEventsByDate();
+        }
         return sensor;
     }
 

@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,10 +56,10 @@ public class SensorRepository {
         return em.createQuery("From Sensor WHERE sensorId=:sensorId", Sensor.class).setParameter("sensorId", sensorId).getSingleResult();
     }
 
-    public List<SensorEvent> getLastEventForSensor(Sensor sensor) {
+    public List<SensorEvent> getLastTwoEventsForSensor(Sensor sensor) {
         List<SensorEvent> sensorEvents = em.createQuery("From SensorEvent Where sensor=:sensor order by regTime desc ", SensorEvent.class).setParameter("sensor", sensor).getResultList();
-        if (sensorEvents != null && sensorEvents.size()>1) {
-            return sensorEvents.subList(0,1);
+        if (sensorEvents != null && sensorEvents.size() >= 2) {
+            return sensorEvents.subList(0, 2);
         }
         return Collections.emptyList();
     }

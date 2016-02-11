@@ -85,6 +85,8 @@ public class SensorRegisterController {
                 newEvent.getValues().forEach(
                         eventValue -> oldEvent.getValues().forEach(
                                 old -> identical[0] = eventValue.equals(old)));
+            } else {
+                identical[0] = false;
             }
         }
         return identical[0];

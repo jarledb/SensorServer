@@ -183,7 +183,7 @@ function drawTempratureBox(msg) {
 function plotTempChart(events, documentLocation) {
     data = new google.visualization.DataTable();
     data.addColumn('datetime', 'Time');
-    data.addColumn('number', 'Tempratur');
+    data.addColumn('number', 'Temperatur');
     data.addColumn('number', 'Fuktighet');
     $.each(events, function (index, event) {
         if (event && event.updatedWithTimeZone && event.values && event.values[0]) {

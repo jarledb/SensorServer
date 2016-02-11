@@ -5,9 +5,9 @@ import no.stonehill.web.rest.Views;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 
 @Entity
 public class Sensor implements Serializable {
@@ -31,7 +31,7 @@ public class Sensor implements Serializable {
 
     @JoinColumn(name = "sensorId")
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<SensorEvent> events;
+    private List<SensorEvent> events;
 
     public long getId() {
         return id;
@@ -65,24 +65,25 @@ public class Sensor implements Serializable {
         this.type = type;
     }
 
-    public Set<SensorEvent> getEvents() {
+    public List<SensorEvent> getEvents() {
         return events;
     }
 
-    public void setEvents(Set<SensorEvent> values) {
+    public void setEvents(List<SensorEvent> values) {
         this.events = values;
     }
 
     public void addValue(SensorEvent value) {
         if (events == null) {
-            events = new TreeSet<>();
+            events = new ArrayList<>();
         }
         events.add(value);
     }
 
     public void sortEventsByDate() {
-        Set newSet = new TreeSet(SensorEvent.UPDATED_TIME_COMPARATOR);
+        List newSet = new ArrayList<>();
         newSet.addAll(getEvents());
+        newSet.sort(SensorEvent.UPDATED_TIME_COMPARATOR);
         setEvents(newSet);
     }
 }

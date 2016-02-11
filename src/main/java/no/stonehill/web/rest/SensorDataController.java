@@ -33,7 +33,7 @@ public class SensorDataController {
             sensor.setEvents(sensor.getEvents()
                     .stream().filter(
                             event -> event.getUpdated().isAfter(LocalDateTime.now().minusDays(daysInPast))
-                    ).collect(Collectors.toSet()));
+                    ).collect(Collectors.toList()));
             sensor.sortEventsByDate();
         }
         return sensor;

@@ -128,7 +128,7 @@ public class SensorEvent implements Serializable {
             sb.append(id);
             sb.append(" ");
         } else {
-            sb.append(regTime.format(DateTimeFormatter.ofPattern("DD. MMM HH:mm:ss")));
+            sb.append(regTime.format(DateTimeFormatter.ofPattern("dd.MMM HH:mm:ss")));
             sb.append(" ");
             for (EventValue value : values) {
                 sb.append(value.getKey());

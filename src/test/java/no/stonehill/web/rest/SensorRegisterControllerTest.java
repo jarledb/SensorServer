@@ -35,6 +35,16 @@ public class SensorRegisterControllerTest extends TestCase {
         Assertions.assertThat(SensorRegisterController.isIdentical(event, oldEvents)).isFalse();
     }
 
+    @Test
+    public void testEventToOldToUpdate() throws Exception {
+        SensorEvent event = getSensorEvent(0, new EventValue("TEMP", "22"), new EventValue("HUMIDITY", "50"));
+        List<SensorEvent> oldEvents = Arrays.asList(
+                getSensorEvent(4000, new EventValue("TEMP", "44"), new EventValue("HUMIDITY", "60"))
+        );
+        Assertions.assertThat(SensorRegisterController.isIdentical(event, oldEvents)).isFalse();
+
+    }
+
     private SensorEvent getSensorEvent(int secondsAgo, EventValue... eventValue) {
         SensorEvent event = new SensorEvent();
         event.setRegTime(LocalDateTime.now().minusSeconds(secondsAgo));

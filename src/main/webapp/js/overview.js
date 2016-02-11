@@ -75,8 +75,11 @@ google.charts.setOnLoadCallback(function () {
     getTempSensors();
 });
 setInterval(function () {
-    updateTempSensors() // this will run after every 5 seconds
-}, 5000);
+    updateTempSensors(); // this will run after every 60 seconds
+}, 60000);
+$( window ).resize(function() { //Fixes graph issue when phone is rotated
+  updateTempSensors();
+});
 function updateTempSensors() {
     $("#temprow").children().each(function (index, element) {
         var id = element.id;

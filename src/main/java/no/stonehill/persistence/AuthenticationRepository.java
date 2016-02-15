@@ -4,12 +4,12 @@ import no.stonehill.domain.Apiuser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
+import javax.transaction.Transactional;
 
 @Repository
 public class AuthenticationRepository {
@@ -30,7 +30,6 @@ public class AuthenticationRepository {
     }
 
     @Transactional
-    @javax.transaction.Transactional
     public Apiuser persist(Apiuser apiuser) {
         LOG.info("Persisting apiuser: " + apiuser.toString());
         return em.merge(apiuser);

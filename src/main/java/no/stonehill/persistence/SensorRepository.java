@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,6 +55,14 @@ public class SensorRepository {
 
     public Sensor fetchSensorBySensorId(String sensorId) {
         return em.createQuery("From Sensor WHERE sensorId=:sensorId", Sensor.class).setParameter("sensorId", sensorId).getSingleResult();
+    }
+
+    public List<SensorEvent> fetchEventsForSensorUpdatedAfter(Long sensorId, LocalDateTime after) {
+        return em.createQuery("Select e From SensorEvent e WHERE e.sensor.id=:sensor and e.updated between :daysOld and :now", SensorEvent.class)
+                .setParameter("sensor", sensorId)
+                .setParameter("daysOld", after)
+                .setParameter("now", LocalDateTime.now())
+                .getResultList();
     }
 
     public List<SensorEvent> getLastTwoEventsForSensor(Sensor sensor) {

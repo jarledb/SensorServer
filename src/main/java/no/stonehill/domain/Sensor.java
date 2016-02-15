@@ -30,7 +30,7 @@ public class Sensor implements Serializable {
     private String type;
 
     @JoinColumn(name = "sensorId")
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SensorEvent> events;
 
     public long getId() {
